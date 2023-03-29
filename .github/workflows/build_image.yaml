@@ -37,7 +37,7 @@ jobs:
 
       - name: Get all changed file(s) that match the pattern
         id: changed-files
-        uses: tj-actions/changed-files@V35
+        uses: tj-actions/changed-files@v35
         with:
           files: ${{ inputs.files }}
 
