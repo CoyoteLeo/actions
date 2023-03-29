@@ -1,0 +1,30 @@
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  get-prefix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get branch name
+        id: branch-name
+        uses: tj-actions/branch-names@v6
+    outputs:
+      prefix: ${{ steps.branch-name.outputs.current_branch }}
+
+  build-image:
+    permissions:
+      contents: read
+      packages: write
+    needs:
+      - get-prefix
+    uses: ./.github/workflows/build_image.yaml
+    with:
+      prefix: ${{ needs.get-prefix.outputs.prefix }}
+      registry: ${{ vars.DOCKER_REGISTRY }}
+      image: karta0910489/${{ github.event.repository.name }}
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
