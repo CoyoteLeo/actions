@@ -1,6 +1,6 @@
 ## Build image
 
-[![.github/workflows/test-build_image.yaml](https://github.com/CoyoteLeo/actions/actions/workflows/test-build_image.yaml/badge.svg?branch=main)](https://github.com/CoyoteLeo/actions/actions/workflows/test-build_image.yaml)
+[![.github/workflows/test-build-image.yaml](https://github.com/CoyoteLeo/actions/actions/workflows/test-build-image.yaml/badge.svg?branch=main)](https://github.com/CoyoteLeo/actions/actions/workflows/test-build_image.yaml)
 
 ```yaml
 jobs:
@@ -8,7 +8,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    uses: CoyoteLeo/actions/.github/workflows/build_image.yaml@main
+    uses: CoyoteLeo/actions/.github/workflows/build-image.yaml@main
     with:
       prefix: main
       registry: ${{ vars.DOCKER_REGISTRY }}

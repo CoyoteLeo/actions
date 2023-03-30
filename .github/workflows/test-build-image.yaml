@@ -20,7 +20,7 @@ jobs:
       packages: write
     needs:
       - get-prefix
-    uses: ./.github/workflows/build_image.yaml
+    uses: ./.github/workflows/build-image.yaml
     with:
       prefix: ${{ needs.get-prefix.outputs.prefix }}
       registry: ${{ vars.DOCKER_REGISTRY }}
