@@ -22,10 +22,11 @@ on:
         description: 'The name of the image'
         required: true
         type: string
-      prefix:
-        description: 'prefix of the image tag'
-        required: true
+      tags:
+        description: 'The versions of the image'
+        required: false
         type: string
+        default: latest
 
     secrets:
       DOCKER_USERNAME:
@@ -53,6 +54,12 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Render tags
+        id: render
+        run: |
+          tags=$(awk -F ',' '{ for( i=1; i<=NF; i++ ) print "type=raw,value=" $i }' <<< "${{ inputs.tags }}")
+          echo "tags=$tags" >> $GITHUB_OUTPUT
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v4
@@ -60,15 +67,20 @@ jobs:
           images: |
             ${{ inputs.registry }}/${{ inputs.image }}
           tags: |
-            type=sha,prefix=${{ inputs.prefix }}-
+            ${{ steps.render.outputs.tags }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Summary
+        run: |
+          echo '## Built Image' >> $GITHUB_STEP_SUMMARY
+          echo '- tag: `${{ steps.meta.outputs.tags }}`' >> $GITHUB_STEP_SUMMARY
+
     outputs:
       image: ${{ steps.meta.outputs.tags }}

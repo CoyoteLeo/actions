@@ -5,26 +5,31 @@ on:
       - dev
 
 jobs:
-  get-prefix:
+  setup:
     runs-on: ubuntu-latest
     steps:
       - name: Get branch name
         id: branch-name
         uses: tj-actions/branch-names@v6
+
+      - name: Setup image version
+        id: image-version
+        run: |
+          sha=${{ github.sha }}
+          echo "version=${{ steps.branch-name.outputs.current_branch }}-${sha:0:7}" >> $GITHUB_OUTPUT
     outputs:
-      prefix: ${{ steps.branch-name.outputs.current_branch }}
+      tag: ${{ steps.image-version.outputs.version }}
 
   build-image:
     permissions:
       contents: read
       packages: write
     needs:
-      - get-prefix
+      - setup
     uses: ./.github/workflows/build-image.yaml
     with:
-      prefix: ${{ needs.get-prefix.outputs.prefix }}
-      registry: ${{ vars.DOCKER_REGISTRY }}
-      image: karta0910489/${{ github.event.repository.name }}
+      image: ${{ vars.DOCKER_USERNAME }}/${{ github.event.repository.name }}
+      tags: ${{ needs.setup.outputs.tag }}
     secrets:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
