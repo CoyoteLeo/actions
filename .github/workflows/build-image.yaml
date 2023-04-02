@@ -27,6 +27,11 @@ on:
         required: false
         type: string
         default: latest
+      build-args:
+        description: 'The build arguments for the image'
+        required: false
+        type: string
+        default: ''
 
     secrets:
       DOCKER_USERNAME:
@@ -35,6 +40,9 @@ on:
       DOCKER_PASSWORD:
         description: 'Password for the registry'
         required: true
+      build-args:
+        description: 'The build arguments for the image(contain credentials))'
+        required: false
 
 jobs:
   build-and-push-image:
@@ -74,6 +82,9 @@ jobs:
         with:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+          build-args: |
+            ${{ inputs.build-args }}
+            ${{ secrets.build-args }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
