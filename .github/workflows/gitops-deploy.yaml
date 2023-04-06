@@ -19,6 +19,10 @@ on:
       value:
         required: true
         type: string
+      is_plain_text:
+        required: false
+        type: boolean
+        default: false
 
     secrets:
       REPO_PAT:
@@ -44,6 +48,7 @@ jobs:
           token: ${{ secrets.REPO_PAT }}
 
       - name: Update Version
+        if: ${{ !inputs.is_plain_text }}
         run: |
           dasel put \
           -f ${{ inputs.path }} \
@@ -51,6 +56,14 @@ jobs:
           -t string \
           -v ${{ inputs.value }} \
           ${{ inputs.selector }}
+
+      - name: Update Version(plain text)
+        if: ${{ inputs.is_plain_text }}
+        run: |
+          sed \
+          -i \
+          's/${{ inputs.selector }}/${{ inputs.value }}/g' \
+          ${{ inputs.path }}
 
       - name: Check diff
         id: check-diff
