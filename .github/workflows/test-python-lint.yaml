@@ -1,0 +1,13 @@
+on:
+  push:
+    branches:
+      - main
+      - dev
+    paths:
+      - .github/workflows/python-lint.yaml
+
+jobs:
+  lint:
+    uses: CoyoteLeo/actions/.github/workflows/python-lint.yaml@main
+    with:
+      image: ${{ vars.DOCKER_USERNAME }}/${{ github.event.repository.name }}:main-latest

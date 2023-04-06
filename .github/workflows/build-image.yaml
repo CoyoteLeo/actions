@@ -65,8 +65,10 @@ jobs:
       - name: Render tags
         id: render
         run: |
-          tags=$(awk -F ',' '{ for( i=1; i<=NF; i++ ) print "type=raw,value=" $i }' <<< "${{ inputs.tags }}")
-          echo "tags=$tags" >> $GITHUB_OUTPUT
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "tags<<$EOF" >> $GITHUB_OUTPUT
+          awk -F ',' '{ for( i=1; i<=NF; i++ ) print "type=raw,value=" $i }' <<< "${{ inputs.tags }}" >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta

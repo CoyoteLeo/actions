@@ -3,6 +3,9 @@ on:
     branches:
       - main
       - dev
+    paths:
+      - .github/workflows/build-image.yaml
+      - Dockerfile
 
 jobs:
   setup:
@@ -18,6 +21,7 @@ jobs:
           sha=${{ github.sha }}
           echo "version=${{ steps.branch-name.outputs.current_branch }}-${sha:0:7}" >> $GITHUB_OUTPUT
     outputs:
+      branch: ${{ steps.branch-name.outputs.current_branch }}
       tag: ${{ steps.image-version.outputs.version }}
 
   build-image:
@@ -29,7 +33,7 @@ jobs:
     uses: ./.github/workflows/build-image.yaml
     with:
       image: ${{ vars.DOCKER_USERNAME }}/${{ github.event.repository.name }}
-      tags: ${{ needs.setup.outputs.tag }}
+      tags: ${{ needs.setup.outputs.tag }},${{ needs.setup.outputs.branch }}-latest
     secrets:
       DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
