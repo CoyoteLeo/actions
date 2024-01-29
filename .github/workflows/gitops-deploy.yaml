@@ -41,7 +41,7 @@ jobs:
           mv ./dasel /usr/local/bin/dasel
 
       - name: Checkout deploy repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ${{ inputs.repository }}
           ref: main
