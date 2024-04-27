@@ -117,9 +117,6 @@ jobs:
             ${{ secrets.build-args }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          # TODO: https://github.com/docker/build-push-action/issues/737#issuecomment-1374854887
-          context: .
-#          github-token: ${{ secrets.github-token || github.token }}
 
       - name: Summary
         run: |
