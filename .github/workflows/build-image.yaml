@@ -32,6 +32,11 @@ on:
         required: false
         type: string
         default: ''
+      platforms:
+        description: 'The platform to build the image for'
+        required: false
+        type: string
+        default: linux/amd64,linux/arm64
 
     secrets:
       DOCKER_USERNAME:
@@ -62,6 +67,9 @@ jobs:
         with:
           token: ${{ secrets.github-token || github.token }}
           submodules: true
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -117,7 +125,7 @@ jobs:
             ${{ secrets.build-args }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ inputs.platforms }}
 
       - name: Summary
         run: |
